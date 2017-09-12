@@ -1,2 +1,2 @@
 # maildriver
-using mail server for driver
+using mail server as driver

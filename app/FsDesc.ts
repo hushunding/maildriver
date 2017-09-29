@@ -1,6 +1,7 @@
 // 文件描述符
 
 import * as path from 'path';
+import { Stat } from 'fs';
 let _lastNodeIndex: number = 0;
 // 获取最新的节点索引，获取一次即更新一次
 export function LastNodeIndex() {
@@ -72,6 +73,7 @@ export abstract class SNode implements SaveNode {
         this._parent = p;
         this._parentIndex = p._nodeIndex;
     }
+
 }
 export class FoldNode extends SNode {
     public Child: Map<string, SNode>;
@@ -113,7 +115,7 @@ export class FoldNode extends SNode {
     //     const snode = new FileNode(name, fileSize, storeSize, this);
     // }
     public FindFold(foldName: string) {
-        // foldName = foldName.trim()
+        // foldName = foldName.split(path.posix.sep);
         // let curFold = this;
         // for(let p of foldName.split(path.posix.sep).slice(1))
         // {
@@ -132,7 +134,7 @@ export class FileNode extends SNode {
         _storeSize = -1,
         _fileIndex = "",
         _parent = null }: SaveNode & { _parent?: FoldNode }) {
-        super({ _nodeIndex, _name, _parentIndex, _isLeaf : true, _fileSize, _storeSize, _fileIndex, _parent});
+        super({ _nodeIndex, _name, _parentIndex, _isLeaf: true, _fileSize, _storeSize, _fileIndex, _parent });
     }
 
     public get FileSize(): number {
@@ -140,6 +142,12 @@ export class FileNode extends SNode {
     }
     public get StoreSize(): number {
         return this._storeSize;
+    }
+    public set StoreSize(ss: number) {
+        this._storeSize = ss;
+    }
+    public set FileIndex(i: string) {
+        this._fileIndex = i;
     }
 
 }

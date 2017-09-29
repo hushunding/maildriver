@@ -1,61 +1,67 @@
-import { NetDriver} from "./ndinterface";
-import * as Imap from 'imap'
-import { SNode } from "./NetFS";
-type cbReslut = Error | null
+import * as Imap from 'imap';
+import { EventEmitter } from 'events';
+import { INetDiver, INDupload } from './INetDriver';
 
-export class ImapNetDriver implements NetDriver {
-    _transmitList: SNode[];
-    imap: Imap;
-    constructor(private config: Imap.Config, cb: (err: cbReslut) => void) {
+// tslint:disable-next-line:no-var-requires
+
+type cbReslut = Error | null;
+
+
+export class ImapNetDriver extends EventEmitter implements INetDiver {
+    uploadJFile(jfile: string): INDupload {
+        throw new Error("Method not implemented.");
+    }
+    uploadIndexFile(jfile: string): INDupload {
+        throw new Error("Method not implemented.");
+    }
+    private imap: Imap;
+    constructor(private config: Imap.Config) {
+        super();
         this.imap = new Imap(config);
         this.imap.connect();
-        this.imap.once('error', function (err: cbReslut) {
-            console.log(err);
+        this.imap.once('error', (err: cbReslut) => {
+            this.emit('error', err);
         });
 
-        this.imap.once('end', function () {
+        this.imap.once('end', () => {
             console.log('Connection ended');
         });
         this.imap.once('ready', () => {
-            this.checkAndformat(null, cb);
+            this.checkAndformat(null);
         });
     }
-    private checkAndformat(err: cbReslut, cb: (err: cbReslut) => void) {
+    private checkAndformat(err: cbReslut) {
         if (err) {
-            console.log(err);
-            cb(err);
-        }
-        else {
+            this.emit('error', err);
+        } else {
             this.imap.getBoxes((err, mailboxs) => {
                 if (err) {
-                    console.log(err);
-                    cb(err)
+                    this.emit('error', err);
+                } else {
+                    this._format(mailboxs);
                 }
-                else {
-                    this._format(mailboxs, cb);
-                }
-            })
+            });
         }
     }
-    //完成目录格式初始化
-    _format(mailboxs: Imap.MailBoxes, cb: (err: cbReslut) => void): void {
+    // 完成目录格式初始化
+    private _format(mailboxs: Imap.MailBoxes): void {
         if (mailboxs.nddb === undefined) {
-            this.imap.addBox('nddb', (err: cbReslut) => this.checkAndformat(err, cb))
+            this.imap.addBox('nddb', (err: cbReslut) => this.checkAndformat(err));
         } else if (mailboxs.nddb.children === null) {
-            this.imap.addBox('nddb/jlog', (err: cbReslut) => this.checkAndformat(err, cb))
-        }
-        else if (mailboxs.nddb.children.index === undefined)
-            this.imap.addBox('nddb/index', (err: cbReslut) => this.checkAndformat(err, cb))
-        else {
-            cb(null);
+            this.imap.addBox('nddb/jlog', (err: cbReslut) => this.checkAndformat(err));
+        } else if (mailboxs.nddb.children.index === undefined) {
+            this.imap.addBox('nddb/index', (err: cbReslut) => this.checkAndformat(err));
+        } else {
+            this.emit('ready');
         }
     }
 
-    upload(fileName: string): boolean {
-        throw new Error("Method not implemented.");
+    private uploadFile(box: string, fileName: string): INDupload {
+        let ee = new EventEmitter();
+        return ee;
     }
-    download(fileName: string): boolean {
-        throw new Error("Method not implemented.");
+    private download(fileName: string): boolean {
+        //this.imap.fetch()
     }
     flush(): boolean {
         throw new Error("Method not implemented.");
@@ -66,7 +72,4 @@ export class ImapNetDriver implements NetDriver {
     transmitFinish(): void {
         throw new Error("Method not implemented.");
     }
-
-
-
 }

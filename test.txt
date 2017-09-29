@@ -1,0 +1,73 @@
+Content-Type: multipart/mixed; boundary="--_NmP-19cc7b3f6488352b-Part_1"
+To: 12xxxx101@qq.com
+Subject: Nodemailer is unicode friendly
+Message-ID: <10a5ca2c-d193-781b-06e5-083b745cdf6c@hsd-work>
+Date: Thu, 28 Sep 2017 06:37:32 +0000
+MIME-Version: 1.0
+
+----_NmP-19cc7b3f6488352b-Part_1
+Content-Type: multipart/alternative;
+ boundary="--_NmP-19cc7b3f6488352b-Part_2"
+
+----_NmP-19cc7b3f6488352b-Part_2
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+Hello to myself~
+----_NmP-19cc7b3f6488352b-Part_2
+Content-Type: text/watch-html
+Content-Transfer-Encoding: 7bit
+
+<b>Hello</b> to myself
+----_NmP-19cc7b3f6488352b-Part_2
+Content-Type: multipart/related; type="text/html";
+ boundary="--_NmP-19cc7b3f6488352b-Part_5"
+
+----_NmP-19cc7b3f6488352b-Part_5
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+
+<p><b>Hello</b> to myself <img src=3D "cid:00001"/></p><p>Here's a nyan car=
+ for you as embedded attachment:<br/><img =
+src=3D"cid:00002"/></p>
+----_NmP-19cc7b3f6488352b-Part_5
+Content-Type: image/png; name=image.png
+Content-ID: <00001>
+Content-Disposition: attachment; filename=image.png
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lE
+QVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQ
+AAAAAElFTkSuQmCC
+----_NmP-19cc7b3f6488352b-Part_5
+Content-Type: image/gif; name="nyan cat.gif"
+Content-ID: <00002>
+Content-Disposition: attachment; filename="nyan cat.gif"
+Content-Transfer-Encoding: base64
+
+ewogICJuYW1lIjogIm1haWxkcml2ZXIiLAogICJ2ZXJzaW9uIjogIjEuMC4wIiwKICAiZGVzY3Jp
+cHRpb24iOiAidXNyIG1haWwgYXMgbmV0IGRyaXZlciIsCiAgIm1haW4iOiAiaW5kZXguanMiLAog
+ICJzY3JpcHRzIjogewogICAgInRlc3QiOiAiZWNobyBcIkVycm9yOiBubyB0ZXN0IHNwZWNpZmll
+ZFwiICYmIGV4aXQgMSIKICB9LAogICJyZXBvc2l0b3J5IjogewogICAgInR5cGUiOiAiZ2l0IiwK
+ICAgICJ1cmwiOiAiZ2l0K2h0dHBzOi8vZ2l0aHViLmNvbS9odXNodW5kaW5nL21haWxkcml2ZXIu
+Z2l0IgogIH0sCiAgImF1dGhvciI6ICIiLAogICJsaWNlbnNlIjogIklTQyIsCiAgImJ1Z3MiOiB7
+CiAgICAidXJsIjogImh0dHBzOi8vZ2l0aHViLmNvbS9odXNodW5kaW5nL21haWxkcml2ZXIvaXNz
+dWVzIgogIH0sCiAgImhvbWVwYWdlIjogImh0dHBzOi8vZ2l0aHViLmNvbS9odXNodW5kaW5nL21h
+aWxkcml2ZXIjcmVhZG1lIiwKICAiZGVwZW5kZW5jaWVzIjogewogICAgIkB0eXBlcy9zcWxpdGUz
+IjogIl4zLjEuMSIsCiAgICAiaWNvbnYtbGl0ZSI6ICJeMC40LjE5IiwKICAgICJpbWFwIjogIl4w
+LjguMTkiLAogICAgIm5vZGUtN3ppcCI6ICJeMS4wLjEiLAogICAgInNxbGl0ZTMiOiAiXjMuMS4x
+MSIKICB9LAogICJkZXZEZXBlbmRlbmNpZXMiOiB7CiAgICAiQHR5cGVzL2ljb252LWxpdGUiOiAi
+MC4wLjEiLAogICAgIkB0eXBlcy9pbWFwIjogIl4wLjguMjkiLAogICAgImNoYWkiOiAiXjQuMS4y
+IiwKICAgICJtb2NoYSI6ICJeMy41LjMiLAogICAgInRzIjogIjAuMC4wIiwKICAgICJ0cy1ub2Rl
+IjogIl4zLjMuMCIsCiAgICAidHlwZXNjcmlwdCI6ICJeMi41LjIiCiAgfQp9Cg==
+----_NmP-19cc7b3f6488352b-Part_5--
+
+----_NmP-19cc7b3f6488352b-Part_2--
+
+----_NmP-19cc7b3f6488352b-Part_1
+Content-Type: text/plain; name=notes.txt
+Content-Disposition: attachment; filename=notes.txt
+Content-Transfer-Encoding: 7bit
+
+Some notes about this e-mail
+----_NmP-19cc7b3f6488352b-Part_1--

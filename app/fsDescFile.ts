@@ -1,7 +1,8 @@
-import { Database, RunResult } from 'sqlite3';
+import { Database, RunResult, verbose } from 'sqlite3';
 import * as fs from 'fs';
 import * as zlib from 'zlib';
 import { SNode, FileNode, IndexList, FoldNode, ReInitLastNodeIndex, SaveNode, SaveIndex } from './FsDesc';
+import * as util from 'util';
 
 class DBSaveNode {
     public _nodeIndex: number;
@@ -38,28 +39,57 @@ class DBSaveIndex {
         this._locjson = _locjson;
     }
 }
+// type cbType<resT> = (err: Error, result: resT) => void;
+// type asyncFunc0<resT> = (cb: cbType<resT>) => void;
+// type asyncFunc1<arg1T, resT> = (arg1: arg1T, cb: cbType<resT>) => void;
+// type asyncFunc2<arg1T, arg2T, resT> = (arg1: arg1T, arg2: arg1T, cb: cbType<resT>) => void;
+// export declare function methodPromisify<resT, thisT>(fn: asyncFunc0<resT>, thisArg: thisT): () => Promise<resT>;
+// export declare function methodPromisify<arg1T, resT, thisT>(fn: asyncFunc1<arg1T, resT>, thisArg: thisT): (arg1: arg1T) => Promise<resT>;
+
+// export function methodPromisify(fn: Function, thisArg) {
+//     function PromiseFunc() {
+//         const args = new Array();
+//         for (let index = 0; index < fn.length; index++) {
+//             args.push(arguments[index]);
+//         }
+//         return new Promise((r, j) => {
+//             const cb = (err, result) => {
+//                 if (err) {
+//                     j(err);
+//                 } else {
+//                     r(result);
+//                 }
+//             };
+//             args.push(cb);
+//             fn.apply(thisArg, args);
+//         });
+//     };
+//     return PromiseFunc;
+// }
 // 初始化文件树和文件索引列表
 export class FsDescFile {
+    private promisify: (fn: (sql: string, cb: (err: Error, result: any) => void) => void) => (sql: string) => Promise<{}>;
+
+    private all: (sql: string) => Promise<any[]>;
+    private run: (sql: string) => Promise<void>;
     private db: Database;
-    public InitFsDescFromdb(dbPath: string, cb: (nodeTree: SNode, indexlist: IndexList) => void) {
-        this.db = new Database(dbPath);
+    public async InitFsDescFromdb(dbPath: string) {
+        // const sqlite3 = require('sqlite3').verbose();
+        // this.db = new sqlite3.Database(dbPath);
         // 建立表
-        this.db.run(this.getCreateStr(DBSaveNode, '_nodeIndex'), (err: Error) => {
-            if (err) { console.log(err); throw err; }
-            this.db.run(this.getCreateStr(DBSaveIndex, '_fileIndex'), (err: Error) => {
-                // 获取信息
-                if (err) { console.log(err); throw err; }
-                this.db.all('Select * from DBSaveNode', (err, rows: DBSaveNode[]) => {
-                    if (err) { console.log(err); throw err; }
-                    const nodeTree = this.InitNodeTree(rows);
-                    this.db.all('Select * from DBSaveIndex', (err, rows: DBSaveIndex[]) => {
-                        if (err) { console.log(err); throw err; }
-                        const indexlist = this.InitIndexList(rows);
-                        cb(nodeTree, indexlist);
-                    });
-                });
-            });
-        });
+        this.db = new Database(dbPath);
+        // this.run = methodPromisify(this.db.run, this.db);
+        // this.all = methodPromisify(this.db.all, this.db);
+        this.run = util.promisify((s, cb) => this.db.run(s, cb));
+        this.all = util.promisify((s, cb) => this.db.all(s, cb));
+        // this.prepare = methodPromisify(this.db.prepare, this.db);
+        await this.run(this.getCreateStr(DBSaveNode, '_nodeIndex'));
+        const rows = await this.all('Select * from DBSaveNode') as DBSaveNode[];
+        const nodeTree = this.InitNodeTree(rows);
+        await this.run(this.getCreateStr(DBSaveIndex, '_fileIndex'));
+        const indexrows = await this.all('Select * from DBSaveIndex') as DBSaveIndex[];
+        const indexlist = this.InitIndexList(indexrows);
+        return { nodeTree, indexlist };
     }
     // 根据模板类创建
     private getCreateStr(classType: any, mainkey: string = "") {
@@ -111,18 +141,24 @@ export class FsDescFile {
             }
         }
     }
-    public InsertNodeTree(snode: SNode) {
+    public async InsertNodeTree(snode: SNode) {
         const nodelist = new Array<SNode>();
         this.TransTreetoList(snode, nodelist);
+        const keylist = Object.keys(new DBSaveNode());
+        const vallist = keylist.map((key) => `?`);
+        const smt = this.db.prepare(`INSERT INTO DBSaveNode (${keylist.join(',')}) VALUES (${vallist.join(',')})`);
+        const smtrun: (sql: string[]) => Promise<void> = util.promisify((s, cb) => smt.run(s, cb));
+        const smtfinalize: (sql?: null) => Promise<void> = util.promisify((s = null, cb) => smt.finalize(cb));
         for (const n of nodelist) {
-            const sn = new DBSaveNode({ ...n})
-            const keylist = Object.keys(sn);
+            const sn = new DBSaveNode(n);
             // const vallist = keylist.map((key) => typeof sn[key] === 'string' ? `"${sn[key]}"` : sn[key].toString());
-            const vallist = keylist.map((key) => `"${sn[key]}"`);
-            this.db.run(`INSERT INTO DBSaveNode (${keylist.join(',')}) VALUES (${vallist.join(',')})`, (err: Error) => {
-                if (err) { console.log(err); throw err; }
-            });
+            const vallist = keylist.map((key) => `${sn[key]}`);
+            await smtrun(vallist);
+            // this.db.run(`INSERT INTO DBSaveNode (${keylist.join(',')}) VALUES (${vallist.join(',')})`, (err: Error) => {
+            //     if (err) { console.log(err); throw err; }
+            // });
         }
+        await smtfinalize();
     }
 }
 

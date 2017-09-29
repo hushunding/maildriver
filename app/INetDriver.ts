@@ -1,0 +1,17 @@
+import { EventEmitter } from 'events';
+import { SNode, SaveNode, FileNode } from './FsDesc';
+
+export interface INDupload extends EventEmitter {
+    on(event: "start", listener: Function): this;
+    on(event: "end", listener: Function): this;
+}
+export interface INetDiver {
+    uploadJFile(file: string): INDupload;
+    uploadIndexFile(filePath: string, fileDesc: SaveNode): INDupload;
+    on(event: "error", listener: (err: Error) => void): this;
+    once(event: "ready", listener: () => void): this;
+}
+export interface IuploadFileNode {
+    node: FileNode;
+    state: 'New' | 'Finish' | 'Cancel';
+}

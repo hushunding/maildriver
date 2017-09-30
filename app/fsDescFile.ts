@@ -1,8 +1,10 @@
-import { Database, RunResult, verbose } from 'sqlite3';
 import * as fs from 'fs';
 import * as zlib from 'zlib';
 import { SNode, FileNode, IndexList, FoldNode, ReInitLastNodeIndex, SaveNode, SaveIndex } from './FsDesc';
 import * as util from 'util';
+import { DatabasePromise } from './sqlite-promise';
+import * as  Nedb from 'nedb';
+import { NeDBPromise } from './nedb-promise';
 
 class DBSaveNode {
     public _nodeIndex: number;
@@ -68,26 +70,33 @@ class DBSaveIndex {
 // }
 // 初始化文件树和文件索引列表
 export class FsDescFile {
+    private nedb: { nodelist: NeDBPromise<DBSaveNode>; indexList: NeDBPromise<DBSaveIndex> };
     private promisify: (fn: (sql: string, cb: (err: Error, result: any) => void) => void) => (sql: string) => Promise<{}>;
 
-    private all: (sql: string) => Promise<any[]>;
-    private run: (sql: string) => Promise<void>;
-    private db: Database;
+    private db: DatabasePromise;
     public async InitFsDescFromdb(dbPath: string) {
-        // const sqlite3 = require('sqlite3').verbose();
-        // this.db = new sqlite3.Database(dbPath);
         // 建立表
-        this.db = new Database(dbPath);
-        // this.run = methodPromisify(this.db.run, this.db);
-        // this.all = methodPromisify(this.db.all, this.db);
-        this.run = util.promisify((s, cb) => this.db.run(s, cb));
-        this.all = util.promisify((s, cb) => this.db.all(s, cb));
-        // this.prepare = methodPromisify(this.db.prepare, this.db);
-        await this.run(this.getCreateStr(DBSaveNode, '_nodeIndex'));
-        const rows = await this.all('Select * from DBSaveNode') as DBSaveNode[];
+        this.db = new DatabasePromise(dbPath);
+        await this.db.run(this.getCreateStr(DBSaveNode, '_nodeIndex'));
+        const rows = await this.db.all('Select * from DBSaveNode') as DBSaveNode[];
         const nodeTree = this.InitNodeTree(rows);
-        await this.run(this.getCreateStr(DBSaveIndex, '_fileIndex'));
-        const indexrows = await this.all('Select * from DBSaveIndex') as DBSaveIndex[];
+        await this.db.run(this.getCreateStr(DBSaveIndex, '_fileIndex'));
+        const indexrows = await this.db.all('Select * from DBSaveIndex') as DBSaveIndex[];
+        const indexlist = this.InitIndexList(indexrows);
+        return { nodeTree, indexlist };
+    }
+    public async InitFsDescFromnedb(dbPath: string) {
+        // 建立表
+        this.nedb = {
+            nodelist: new NeDBPromise({ filename: `${dbPath}_DBSaveNode`, autoload: true }),
+            indexList: new NeDBPromise({ filename: `${dbPath}_DBSaveIndex`, autoload: true }),
+        };
+        this.nedb.nodelist.ensureIndex({ fieldName: '_nodeIndex', unique: true });
+        this.nedb.indexList.ensureIndex({ fieldName: '_fileIndex', unique: true });
+
+        const rows = await this.nedb.nodelist.findandSortAsync({}, { _nodeIndex: 1 });
+        const nodeTree = this.InitNodeTree(rows);
+        const indexrows = await this.nedb.indexList.findAsync({});
         const indexlist = this.InitIndexList(indexrows);
         return { nodeTree, indexlist };
     }
@@ -141,24 +150,55 @@ export class FsDescFile {
             }
         }
     }
+    public async InsertNodeTreeNE(snode: SNode) {
+        const starttime = Date.now();
+        // console.log(starttime)
+        const nodelist = new Array<DBSaveNode>();
+        for (const item of snode.Walk()) {
+            nodelist.push(new DBSaveNode(item));
+        }
+        await this.nedb.nodelist.insertAsync(nodelist);
+        console.log(Date.now() - starttime);
+    }
     public async InsertNodeTree(snode: SNode) {
+        const starttime = Date.now();
+        // console.log(starttime)
         const nodelist = new Array<SNode>();
         this.TransTreetoList(snode, nodelist);
         const keylist = Object.keys(new DBSaveNode());
         const vallist = keylist.map((key) => `?`);
         const smt = this.db.prepare(`INSERT INTO DBSaveNode (${keylist.join(',')}) VALUES (${vallist.join(',')})`);
-        const smtrun: (sql: string[]) => Promise<void> = util.promisify((s, cb) => smt.run(s, cb));
-        const smtfinalize: (sql?: null) => Promise<void> = util.promisify((s = null, cb) => smt.finalize(cb));
-        for (const n of nodelist) {
-            const sn = new DBSaveNode(n);
-            // const vallist = keylist.map((key) => typeof sn[key] === 'string' ? `"${sn[key]}"` : sn[key].toString());
-            const vallist = keylist.map((key) => `${sn[key]}`);
-            await smtrun(vallist);
-            // this.db.run(`INSERT INTO DBSaveNode (${keylist.join(',')}) VALUES (${vallist.join(',')})`, (err: Error) => {
-            //     if (err) { console.log(err); throw err; }
-            // });
-        }
-        await smtfinalize();
+        // this.db._db.serialize(() => {
+        //     for (const n of nodelist) {
+        //         const sn = new DBSaveNode(n);
+        //         // const vallist = keylist.map((key) => `${sn[key]}`);
+        //         // console.log(vallist);
+        //         // smt._smt.run(vallist, (err) => {
+        //         //     console.log(Date.now() - starttime);
+        //         // });
+        //         const vallist = keylist.map((key) => typeof sn[key] === 'string' ? `"${sn[key]}"` : sn[key].toString());
+        //         this.db._db.run(`INSERT INTO DBSaveNode (${keylist.join(',')}) VALUES (${vallist.join(',')})`, (err: Error) => {
+        //             if (err) { console.log(err); throw err; }
+        //             console.log(Date.now() - starttime);
+        //         });
+        //     }
+        // });
+        // console.log(Date.now() - starttime);
+
+        const smtrunGen = function* () {
+            for (const n of nodelist) {
+                const sn = new DBSaveNode(n);
+                // const vallist = keylist.map((key) => typeof sn[key] === 'string' ? `"${sn[key]}"` : sn[key].toString());
+                const vallist = keylist.map((key) => `${sn[key]}`);
+                yield smt.run(vallist);
+                // this.db.run(`INSERT INTO DBSaveNode (${keylist.join(',')}) VALUES (${vallist.join(',')})`, (err: Error) => {
+                //     if (err) { console.log(err); throw err; }
+                // });
+            }
+        };
+        await Promise.all(smtrunGen());
+        smt.finalize();
+        console.log(Date.now() - starttime);
     }
 }
 

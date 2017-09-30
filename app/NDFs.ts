@@ -10,7 +10,7 @@ export class NDFsLocal {
     public readonly cachesRoot = '.caches';
     public readonly uploadcaches = path.join(this.cachesRoot, 'upload');
     public readonly downloadcaches = path.join(this.cachesRoot, 'download');
-    public readonly nodefile = path.join(this.cachesRoot, 'fnode.db');
+    public readonly nodefile = false ? ':memory:' : path.join(this.cachesRoot, 'fnode.db');
     public upLoadFileList: Map<string, IuploadFileNode>;
     private _fileTree: FoldNode;
     private _indexList: IndexList;
@@ -26,22 +26,23 @@ export class NDFsLocal {
         for (const d of [this.cachesRoot, this.uploadcaches, this.downloadcaches]) {
             if (!fs.existsSync(d)) { await util.promisify(fs.mkdir)(d); }
         }
-        const { nodeTree, indexlist } = await this.fdf.InitFsDescFromdb(this.nodefile);
+        const { nodeTree, indexlist } = await this.fdf.InitFsDescFromnedb(this.nodefile);
         if (nodeTree !== null) {
             this._fileTree = nodeTree as FoldNode;
         } else {
-            await this.fdf.InsertNodeTree(this._fileTree);
+            await this.fdf.InsertNodeTreeNE(this._fileTree);
         }
         this._indexList = indexlist;
     }
 
     // 获取上传文件列表并生产节点树
-    public _GetNodeTree(PathName: string, parentNode: FoldNode = null): SNode {
+    public async _GetNodeTree(PathName: string, parentNode: FoldNode = null) {
         const state = fs.lstatSync(PathName);
         if (state.isDirectory()) {
             const uploadNode = new FoldNode({ _name: path.basename(PathName), _parent: parentNode });
-            for (const f of fs.readdirSync(PathName)) {
-                this._GetNodeTree(path.join(PathName, f), uploadNode);
+            const fl = await util.promisify(fs.readdir)(PathName);
+            for (const f of fl) {
+                await this._GetNodeTree(path.join(PathName, f), uploadNode);
             }
             return uploadNode;
         } else {
@@ -58,18 +59,16 @@ export class NDFsLocal {
 
     }
 
-    public upload(remoteparents: string | FoldNode, PathName: string): void {
+    public async upload(remoteparents: string | FoldNode, PathName: string) {
         let rpN: FoldNode;
         if (remoteparents instanceof FoldNode) {
             rpN = remoteparents;
         } else {
             throw new Error("未实现");
         }
-        (async (PathName: string, parentNode: FoldNode) => {
-            const fn = await this._GetNodeTree(PathName, parentNode);
-            this._fileTree.AddChild(fn);
-            this.fdf.InsertNodeTree(fn); // ?写数据是异步的，何时上传node文件是个问题
-        })(PathName, rpN).then(this._handleuploadFile);
+        const fn = await this._GetNodeTree(PathName, rpN);
+        await this.fdf.InsertNodeTreeNE(fn);
+
     }
     private _handleuploadFile() {
         for (const [lfp, ufn] of this.upLoadFileList) {
@@ -97,7 +96,9 @@ export class NDFsLocal {
 if (true) {
     const nd = new NDFsLocal(null);
     nd.Init().then(() => {
-        nd.upload(nd._fileTree, 'E:\\work\\_6_信号资料\\7_Standards\\CTCS')
+        return nd.upload(nd._fileTree, 'E:\\work\\_6_信号资料\\7_Standards\\CTCS')
+    }).catch((err) => {
+        console.log(err);
     });
 }
 

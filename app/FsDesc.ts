@@ -1,7 +1,6 @@
 // 文件描述符
 
 import * as path from 'path';
-import { Stat } from 'fs';
 let _lastNodeIndex: number = 0;
 // 获取最新的节点索引，获取一次即更新一次
 export function LastNodeIndex() {
@@ -56,7 +55,16 @@ export abstract class SNode implements SaveNode {
         if (_parent != null) {
             _parent.AddChild(this);
         }
-
+    }
+    public *Walk(): IterableIterator<SNode> {
+        yield this;
+        if (this.isContain) {
+            for (const [k, v] of (this as FoldNode).Child) {
+                for (const item of v.Walk()) {
+                    yield item;
+                }
+            }
+        }
     }
     public get isContain(): boolean {
         return !this._isLeaf;
@@ -131,7 +139,7 @@ export class FileNode extends SNode {
         _name,
         _parentIndex = -1,
         _fileSize,
-        _storeSize = -1,
+        _storeSize = 0,
         _fileIndex = "",
         _parent = null }: SaveNode & { _parent?: FoldNode }) {
         super({ _nodeIndex, _name, _parentIndex, _isLeaf: true, _fileSize, _storeSize, _fileIndex, _parent });

@@ -13,7 +13,7 @@
             "allow-pascal-case"
         ],
         "max-classes-per-file": [],
-        "quotemark": [],
+        "quotemark": false,
         "ordered-imports": false,
         "no-console": [false],
         "no-shadowed-variable": [

@@ -81,6 +81,9 @@ export abstract class SNode implements SaveNode {
         this._parent = p;
         this._parentIndex = p._nodeIndex;
     }
+    public mapNode(nodeIndex: number) {
+        return SNode.SnodeMap.get(nodeIndex);
+    }
 
 }
 export class FoldNode extends SNode {

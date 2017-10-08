@@ -1,5 +1,5 @@
 // 文件描述符
-
+// todo 重新整理文件描述符。存储、查找、索引整合成一个大类，便于整体加载和初始化
 import * as path from 'path';
 let _lastNodeIndex: number = 0;
 // 获取最新的节点索引，获取一次即更新一次

@@ -10,6 +10,7 @@ export interface INetDiver {
     uploadIndexFile(filePath: string, fileDesc: SaveNode): INDupload;
     on(event: "error", listener: (err: Error) => void): this;
     once(event: "ready", listener: () => void): this;
+    account: string;
 }
 export interface IuploadFileNode {
     node: FileNode;

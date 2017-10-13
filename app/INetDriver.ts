@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
-import { SNode, SaveNode, FileNode } from './FsDesc';
+import { SNode, FileNode } from './FsDesc';
+import { SaveNode } from './fsDesc/fsSaveNode';
 
 export interface INDupload extends EventEmitter {
     on(event: "start", listener: Function): this;

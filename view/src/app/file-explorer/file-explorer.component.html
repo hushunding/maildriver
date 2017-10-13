@@ -1,0 +1,25 @@
+<mat-toolbar color="primary">
+  <button mat-button><mat-icon>file_upload</mat-icon>上传</button>
+  <button mat-button><mat-icon>file_download</mat-icon>下载</button>
+  <button mat-button><mat-icon>delete</mat-icon>删除</button>
+  <button mat-button><mat-icon>create_new_folder</mat-icon>新建文件夹</button>
+</mat-toolbar>
+<mat-toolbar>
+
+  <button mat-button><mat-icon>keyboard_arrow_left</mat-icon></button>
+  <button mat-button> <mat-icon>keyboard_arrow_right</mat-icon></button>
+  <button mat-button><mat-icon>refresh</mat-icon></button>
+  
+</mat-toolbar>
+<mat-table #table [dataSource]="dataSource" matSort>
+  <ng-container cdkColumnDef="name">
+    <mat-header-cell *cdkHeaderCellDef > 文件名 </mat-header-cell>
+    <mat-cell *cdkCellDef="let row"> {{row._name}} </mat-cell>
+  </ng-container>
+  <ng-container cdkColumnDef="fileSize">
+      <mat-header-cell *cdkHeaderCellDef> 大小 </mat-header-cell>
+      <mat-cell *cdkCellDef="let row"> {{row._fileSize}} </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

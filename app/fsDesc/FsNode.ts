@@ -1,18 +1,9 @@
 // 文件描述符
 // todo 重新整理文件描述符。存储、查找、索引整合成一个大类，便于整体加载和初始化
 import * as path from 'path';
+import { SaveNode } from './fsSaveNode';
 
 // tslint:disable-next-line:interface-name
-export interface SaveNode {
-    _nodeIndex?: number;
-    _name: string;
-    _parentIndex?: number;
-    _isLeaf?: boolean;
-    _fileSize?: number;
-    _storeSize?: number;
-    _fileIndex?: string;
-}
-
 export abstract class SNode {
     protected _nodeIndex: number;
     protected _name: string;

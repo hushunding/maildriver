@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TransmitListComponent } from './TransmitList/transmit-list.component';
-import { FileExplorerComponent } from './FileExplorer/file-explorer.component';
+import { FileExplorerComponent } from './file-explorer/file-explorer.component';
+import { TransmitListComponent } from './transmit-list/transmit-list.component';
 
 
 const routes: Routes = [
@@ -15,3 +15,4 @@ const routes: Routes = [
     exports: [RouterModule]
 })
 export class AppRoutingModule { }
+

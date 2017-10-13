@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import * as zlib from 'zlib';
-import { SNode, FileNode, FoldNode, SaveNode } from './fsNode';
+import { SNode, FileNode, FoldNode} from './fsNode';
 import * as util from 'util';
 import { NeDBPromise } from '../nedb-promise';
+import { SaveNode } from './fsSaveNode';
 
 class DBSaveNode {
     public _nodeIndex: number;

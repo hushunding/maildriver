@@ -21,7 +21,7 @@ export class NDFsLocal {
         this.cachesRoot = path.join(this.cachesRoot, this.netdirver.account);
         this.uploadcaches = path.join(this.cachesRoot, "upload");
         this.downloadcaches = path.join(this.cachesRoot, "download");
-        this.nodefile = false ? ":memory:" : path.join(this.cachesRoot, "fnode.db");
+        this.nodefile = this.netdirver.account === 'test' ? ":memory:" : path.join(this.cachesRoot, "fnode.db");
         for (const d of [this.cachesRoot, this.uploadcaches, this.downloadcaches]) {
             if (!fs.existsSync(d)) { await util.promisify(fs.mkdir)(d); }
         }
@@ -87,7 +87,7 @@ export class NDFsLocal {
         const nd = new NDFsLocal({ account: 'test' });
         await nd.Init();
         const root = await nd.fsdec.GetNode(-1);
-        nd.upload(root, "E:\\work\\_6_信号资料\\7_Standards\\CTCS");
+        await nd.upload(root, "E:\\work\\_6_信号资料\\7_Standards\\CTCS");
     }
 })(true).catch((err) => {
     console.log(err);

@@ -8,7 +8,9 @@ import {
   MatButtonModule,
   MatCardModule,
   MatTableModule,
-  MatSortModule
+  MatSortModule,
+  MatCheckboxModule,
+  MatChipsModule
 } from '@angular/material';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -39,7 +41,9 @@ import { HttpModule } from '@angular/http';
     MatTableModule,
     CdkTableModule,
     MatSortModule,
-    HttpModule
+    HttpModule,
+    MatCheckboxModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ViewChildren, EventEmitter } from '@angular/core';
-import { DataSource } from '@angular/cdk/collections';
+import { DataSource, SelectionModel } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
 import 'rxjs/add/observable/of';
@@ -23,11 +23,14 @@ export class FileExplorerComponent implements OnInit {
   dataSource: FsDataSource;
   getfileList: GetFileList;
   displayedColumns: string[];
+  selection = new SelectionModel<number>(true, []);
+  myViewStack: SaveNode[];
 
   @ViewChild(MatSort) sort: MatSort;
   // @ViewChild('refresh') btn: MatButton;
   constructor(private http: Http) {
-    this.displayedColumns = ['name', 'fileSize'];
+    this.displayedColumns = ['select', 'name', 'fileSize'];
+    this.initPathStack();
   }
 
   ngOnInit() {
@@ -38,20 +41,60 @@ export class FileExplorerComponent implements OnInit {
   refreshTable() {
     // this.refresh.isForce = true;
     this.refresh.refreshData.emit({ isForce: true });
+    // this.selection.toggle(2);
+  }
+
+  isAllSelected(): boolean {
+    if (!this.dataSource) { return false; }
+    if (this.selection.isEmpty()) { return false; }
+
+    return this.selection.selected.length === this.dataSource.resultsLength;
+  }
+
+  masterToggle() {
+    if (!this.dataSource) { return; }
+
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.dataSource.data.forEach(data => this.selection.select(data._nodeIndex));
+    }
+  }
+
+  CellClick(node: SaveNode) {
+    this.myViewStack.push(node);
+    console.log(node);
+  }
+  initPathStack() {
+    this.myViewStack = [{ _nodeIndex: -1, _name: '我的邮盘' }];
+  }
+  pathClick(node: SaveNode | null) {
+    if (node === null) {
+      this.initPathStack();
+    } else {
+      while (this.myViewStack.length > 0 && this.myViewStack[this.myViewStack.length - 1]._nodeIndex !== node._nodeIndex) {
+        this.myViewStack.pop();
+      }
+    }
+
   }
 }
 class RefreshTable {
-  isForce = false;
+  pathIndex = -1;
   refreshData: EventEmitter<{ isForce: boolean }> = new EventEmitter();
 }
 
 export class GetFileList {
-  getRepoIssues(sort: string, order: SortDirection, isForce: boolean): Observable<SaveNodeApi> {
-    const es = new Array<SaveNode>();
-    for (let index = 0; index < 100; index++) {
-      es.push({ _name: `${index}`, _fileSize: order === 'asc' ? index : 100 - index });
-    }
-    return Observable.of({ total_count: es.length, items: es });
+  getRepoIssues(_nodeIndex: number, sort: string, order: SortDirection, isForce: boolean): Observable<SaveNodeApi> {
+    const href = 'http://localhost:10800/fileList';
+    const requestUrl = `${href}?_nodeIndex=${_nodeIndex}&sort=${sort}&order=${order}&isForce=${isForce}`;
+    return this.http.get(requestUrl)
+      .map(res => res.json() as SaveNodeApi);
+    // const es = new Array<SaveNode>();
+    // for (let index = 0; index < 100; index++) {
+    //   es.push({ _nodeIndex: index, _name: `${index}`, _fileSize: order === 'asc' ? index : 100 - index });
+    // }
+    // return Observable.of({ total_count: es.length, items: es });
   }
   constructor(private http: Http) { }
 }
@@ -59,8 +102,10 @@ export class FsDataSource extends DataSource<SaveNode> {
   resultsLength = 0;
   isLoadingResults = false;
   isRateLimitReached = false;
+  data: SaveNode[];
   constructor(private db: GetFileList, private sort: MatSort, private refresh: RefreshTable) {
     super();
+    this.data = null;
   }
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   connect(): Observable<SaveNode[]> {
@@ -80,7 +125,7 @@ export class FsDataSource extends DataSource<SaveNode> {
         this.isLoadingResults = true;
         const isForce = params != null && params['isForce'] ? params['isForce'] : false;
         return this.db.getRepoIssues(
-          this.sort.active, this.sort.direction, isForce);
+         this.refresh.pathIndex, this.sort.active, this.sort.direction, isForce);
         // this.paginator.pageIndex
       })
       .map((data: SaveNodeApi) => {
@@ -88,7 +133,7 @@ export class FsDataSource extends DataSource<SaveNode> {
         this.isLoadingResults = false;
         this.isRateLimitReached = false;
         this.resultsLength = data.total_count;
-
+        this.data = data.items;
         return data.items;
       })
       .catch(() => {

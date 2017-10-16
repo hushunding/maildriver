@@ -4,3 +4,4 @@ tgt
 node_modules
 dist
 .caches
+view/src/app/fsDesc

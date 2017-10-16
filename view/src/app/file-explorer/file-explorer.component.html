@@ -8,16 +8,17 @@
 
   <button mat-button><mat-icon>keyboard_arrow_left</mat-icon></button>
   <button mat-button> <mat-icon>keyboard_arrow_right</mat-icon></button>
-  <button mat-button><mat-icon>refresh</mat-icon></button>
+  <button mat-button (click)="refreshTable()" ><mat-icon>refresh</mat-icon></button>
   
 </mat-toolbar>
-<mat-table #table [dataSource]="dataSource" matSort>
+<mat-table #table [dataSource]="dataSource"
+matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
   <ng-container cdkColumnDef="name">
-    <mat-header-cell *cdkHeaderCellDef > 文件名 </mat-header-cell>
+    <mat-header-cell *cdkHeaderCellDef mat-sort-header> 文件名 </mat-header-cell>
     <mat-cell *cdkCellDef="let row"> {{row._name}} </mat-cell>
   </ng-container>
   <ng-container cdkColumnDef="fileSize">
-      <mat-header-cell *cdkHeaderCellDef> 大小 </mat-header-cell>
+      <mat-header-cell *cdkHeaderCellDef mat-sort-header > 大小 </mat-header-cell>
       <mat-cell *cdkCellDef="let row"> {{row._fileSize}} </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

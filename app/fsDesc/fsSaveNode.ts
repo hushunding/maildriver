@@ -8,3 +8,9 @@ export interface SaveNode {
     _storeSize?: number;
     _fileIndex?: string;
 }
+
+// tslint:disable-next-line:interface-name
+export interface SaveNodeApi {
+    items: SaveNode[];
+    total_count: number;
+}

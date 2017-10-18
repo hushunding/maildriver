@@ -86,9 +86,10 @@ class RefreshTable {
 
 export class GetFileList {
   getRepoIssues(_nodeIndex: number, sort: string, order: SortDirection, isForce: boolean): Observable<SaveNodeApi> {
-    const href = 'http://localhost:10800/fileList';
+    const href = 'http://127.0.0.1:10800/csapi';
     const requestUrl = `${href}?_nodeIndex=${_nodeIndex}&sort=${sort}&order=${order}&isForce=${isForce}`;
-    return this.http.get(requestUrl)
+    const boby = { cmd: 'fileList', arg: { _nodeIndex, sort, order, isForce } };
+    return this.http.post(href, JSON.stringify(boby))
       .map(res => res.json() as SaveNodeApi);
     // const es = new Array<SaveNode>();
     // for (let index = 0; index < 100; index++) {
@@ -125,7 +126,7 @@ export class FsDataSource extends DataSource<SaveNode> {
         this.isLoadingResults = true;
         const isForce = params != null && params['isForce'] ? params['isForce'] : false;
         return this.db.getRepoIssues(
-         this.refresh.pathIndex, this.sort.active, this.sort.direction, isForce);
+          this.refresh.pathIndex, this.sort.active, this.sort.direction, isForce);
         // this.paginator.pageIndex
       })
       .map((data: SaveNodeApi) => {

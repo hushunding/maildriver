@@ -5,7 +5,6 @@
   <button mat-button><mat-icon>create_new_folder</mat-icon>新建文件夹</button>
 </mat-toolbar>
 <mat-toolbar>
-
   <button mat-icon-button class="pureIconBtn"><mat-icon>keyboard_arrow_left</mat-icon></button>
   <button mat-icon-button class="pureIconBtn"><mat-icon>keyboard_arrow_right</mat-icon></button>
   <button mat-icon-button class="pureIconBtn" (click)="refreshTable()"><mat-icon>refresh</mat-icon></button>
@@ -16,7 +15,6 @@
       {{item._name}}
     </mat-chip>
   </mat-chip-list>
-
 </mat-toolbar>
 <mat-table #table [dataSource]="dataSource" matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
   <!-- Checkbox Column -->
@@ -30,15 +28,16 @@
       </mat-checkbox>
     </mat-cell>
   </ng-container>
-  <ng-container cdkColumnDef="name">
-    <mat-header-cell *cdkHeaderCellDef mat-sort-header> 文件名 </mat-header-cell>
-    <mat-cell *cdkCellDef="let row" (click)="CellClick(row)"> {{row._name}} </mat-cell>
+
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> 文件名 </mat-header-cell>
+    <mat-cell *matCellDef="let row"> <button  (click)="CellClick(row)">{{row._name}} </button> </mat-cell>
   </ng-container>
-  <ng-container cdkColumnDef="fileSize">
-    <mat-header-cell *cdkHeaderCellDef mat-sort-header> 大小 </mat-header-cell>
-    <mat-cell *cdkCellDef="let row"> {{row._fileSize}} </mat-cell>
+  <ng-container matColumnDef="fileSize">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> 大小 </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row._fileSize}} </mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;" [class.example-selected-row]="selection.isSelected(row._nodeIndex)"></mat-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" [class.example-selected-row]="selection.isSelected(row._nodeIndex)" (click)="selection.toggle(row._nodeIndex)"></mat-row>
 </mat-table>
-<!-- (click)="selection.toggle(row._nodeIndex)" -->
+<!--  (click)="CellClick(row)"-->

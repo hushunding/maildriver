@@ -18,8 +18,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { UserManComponent } from './user-man/user-man.component';
 import { FileExplorerComponent } from './file-explorer/file-explorer.component';
 import { TransmitListComponent } from './transmit-list/transmit-list.component';
-import { CdkTableModule } from '@angular/cdk/table';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -27,7 +26,8 @@ import { HttpModule } from '@angular/http';
     AppComponent,
     FileExplorerComponent,
     TransmitListComponent,
-    UserManComponent
+    UserManComponent,
+    //TableBasicExample
   ],
   imports: [
     BrowserModule,
@@ -38,10 +38,9 @@ import { HttpModule } from '@angular/http';
     MatToolbarModule,
     MatButtonModule,
     MatCardModule,
-    MatTableModule,
-    CdkTableModule,
     MatSortModule,
-    HttpModule,
+    MatTableModule,
+    HttpClientModule,
     MatCheckboxModule,
     MatChipsModule
   ],

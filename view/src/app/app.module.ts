@@ -10,7 +10,10 @@ import {
   MatTableModule,
   MatSortModule,
   MatCheckboxModule,
-  MatChipsModule
+  MatChipsModule,
+  MatInputModule,
+  MatSelectModule,
+  MatListModule
 } from '@angular/material';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -19,6 +22,8 @@ import { UserManComponent } from './user-man/user-man.component';
 import { FileExplorerComponent } from './file-explorer/file-explorer.component';
 import { TransmitListComponent } from './transmit-list/transmit-list.component';
 import { HttpClientModule } from '@angular/common/http';
+import { MainWindComponent } from './main-wind/main-wind.component';
+import { LoginWindComponent } from './login-wind/login-wind.component';
 
 
 @NgModule({
@@ -27,6 +32,8 @@ import { HttpClientModule } from '@angular/common/http';
     FileExplorerComponent,
     TransmitListComponent,
     UserManComponent,
+    MainWindComponent,
+    LoginWindComponent,
     //TableBasicExample
   ],
   imports: [
@@ -42,7 +49,10 @@ import { HttpClientModule } from '@angular/common/http';
     MatTableModule,
     HttpClientModule,
     MatCheckboxModule,
-    MatChipsModule
+    MatChipsModule,
+    MatInputModule,
+    MatSelectModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

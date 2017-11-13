@@ -6,31 +6,24 @@
     </mat-card-title>
   </mat-card-header>
 
-
   <mat-form-field>
     <mat-icon matPrefix>account_box</mat-icon>
-
-    <mat-select  *ngIf="expand" placeholder="用户名"  [(value)]='username' name="item" (onClose) = "expand = !expand">
+    <input matInput placeholder="用户名" [matAutocomplete]="auto"  [(ngModel)]="account.username" required>
+    <mat-autocomplete #auto="matAutocomplete">
       <mat-option>输入新用户名</mat-option>
-      <mat-option *ngFor="let item of items" [value]="item">
-        {{item}}
+      <mat-option *ngFor="let item of userList" [value]="item.username">
+        {{ item.username }}
       </mat-option>
-    </mat-select>
-
-    <input matInput placeholder="用户名" [(value)]="username" *ngIf="!expand">
-    <mat-icon matSuffix (click)="expand = !expand">{{expand ? 'expand_less' : 'expand_more'}}</mat-icon>
+    </mat-autocomplete>
+    <mat-icon matSuffix (click)="username = ''">clear</mat-icon>
   </mat-form-field>
-  <!-- <mat-list *ngIf="expand">
-    <mat-list-item *ngFor="let item of items">{{ item.viewValue }}</mat-list-item>
-  </mat-list> -->
   <mat-form-field>
-    <input matInput placeholder="请输入密码" [type]="hide ? 'password' : 'text'">
+    <input matInput placeholder="请输入密码" [type]="hide ? 'password' : 'text'" [(ngModel)]="account.password" required>
     <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
     <mat-icon matPrefix>lock</mat-icon>
   </mat-form-field>
 
-
   <mat-card-actions>
-    <button mat-button>登录</button> or <button mat-button>注册</button>
+    <button mat-button (click)="signin()">登录</button> or <button mat-button (click)="signup()" >注册</button>
   </mat-card-actions>
 </mat-card>

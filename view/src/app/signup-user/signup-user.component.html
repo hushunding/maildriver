@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>注册新用户</h1>
+<div mat-dialog-content>
+  <mat-vertical-stepper>
+    <mat-step [label]="'用户名:'+data.username">
+        <mat-form-field>
+            <input matInput placeholder=""  required>
+          </mat-form-field>
+    </mat-step>
+    <mat-step label="label2">
+
+    </mat-step>
+  </mat-vertical-stepper>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="data" tabindex="1">Ok</button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">No Thanks</button>
+</div>

@@ -13,7 +13,10 @@ import {
   MatChipsModule,
   MatInputModule,
   MatSelectModule,
-  MatListModule
+  MatListModule,
+  MatDialogModule,
+  MatStepperModule,
+  MatSnackBarModule
 } from '@angular/material';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -24,7 +27,8 @@ import { TransmitListComponent } from './transmit-list/transmit-list.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MainWindComponent } from './main-wind/main-wind.component';
 import { LoginWindComponent } from './login-wind/login-wind.component';
-
+import { SignupUserComponent } from './signup-user/signup-user.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -34,12 +38,14 @@ import { LoginWindComponent } from './login-wind/login-wind.component';
     UserManComponent,
     MainWindComponent,
     LoginWindComponent,
+    SignupUserComponent,
     //TableBasicExample
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    FormsModule,
     MatTabsModule,
     MatIconModule,
     MatToolbarModule,
@@ -52,9 +58,16 @@ import { LoginWindComponent } from './login-wind/login-wind.component';
     MatChipsModule,
     MatInputModule,
     MatSelectModule,
-    MatListModule
+    MatListModule,
+    MatAutocompleteModule,
+    MatDialogModule,
+    MatStepperModule,
+    MatSnackBarModule
   ],
   providers: [],
+  entryComponents: [
+    SignupUserComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

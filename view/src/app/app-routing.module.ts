@@ -7,7 +7,7 @@ import { LoginWindComponent } from './login-wind/login-wind.component';
 const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginWindComponent },
-    { path: 'main', component: MainWindComponent }
+    { path: 'main/:username', component: MainWindComponent, data: {username: '匿名'} }
 ];
 
 @NgModule({

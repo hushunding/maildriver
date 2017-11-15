@@ -17,17 +17,17 @@
   },
   "homepage": "https://github.com/hushunding/maildriver#readme",
   "dependencies": {
-    "@types/sqlite3": "^3.1.1",
     "electron": "^1.8.1",
     "iconv-lite": "^0.4.19",
     "imap": "^0.8.19",
     "nedb": "^1.8.0",
-    "node-7zip": "^1.0.1",
-    "sqlite3": "^3.1.11"
+    "node-7zip": "^1.0.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.0.4",
     "@types/iconv-lite": "0.0.1",
     "@types/imap": "^0.8.29",
+    "@types/mocha": "^2.2.44",
     "@types/nedb": "^1.8.3",
     "chai": "^4.1.2",
     "mocha": "^3.5.3",

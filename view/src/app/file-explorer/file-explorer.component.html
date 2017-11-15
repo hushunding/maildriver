@@ -1,5 +1,11 @@
 <mat-toolbar color="primary">
-  <button mat-button><mat-icon>file_upload</mat-icon>上传</button>
+  <button mat-button [matMenuTriggerFor]="menu"><mat-icon>file_upload</mat-icon>上传</button>
+  <input  #upfile type="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" multiple (change)="onGetUploadFile($event)">
+  <input  #upfold type="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" multiple webkitDirectory (change)="onGetUploadFold($event)">
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click) = "uploadfile()">上传文件</button>
+    <button mat-menu-item (click) = "uploadfold()">上传文件夹</button>
+  </mat-menu>
   <button mat-button [disabled]="!selection.hasValue()"><mat-icon>file_download</mat-icon>下载</button>
   <button mat-button [disabled]="!selection.hasValue()"><mat-icon>delete</mat-icon>删除</button>
   <button mat-button><mat-icon>create_new_folder</mat-icon>新建文件夹</button>

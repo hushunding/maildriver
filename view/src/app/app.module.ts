@@ -16,7 +16,8 @@ import {
   MatListModule,
   MatDialogModule,
   MatStepperModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatMenuModule
 } from '@angular/material';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -62,7 +63,8 @@ import { FormsModule } from '@angular/forms';
     MatAutocompleteModule,
     MatDialogModule,
     MatStepperModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatMenuModule
   ],
   providers: [],
   entryComponents: [

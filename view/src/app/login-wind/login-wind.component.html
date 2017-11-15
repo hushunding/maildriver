@@ -15,7 +15,7 @@
         {{ item.username }}
       </mat-option>
     </mat-autocomplete>
-    <mat-icon matSuffix (click)="username = ''">clear</mat-icon>
+    <mat-icon matSuffix (click)="account.username = ''">clear</mat-icon>
   </mat-form-field>
   <mat-form-field>
     <input matInput placeholder="请输入密码" [type]="hide ? 'password' : 'text'" [(ngModel)]="account.password" required>

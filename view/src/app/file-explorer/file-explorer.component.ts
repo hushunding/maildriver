@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ViewChildren, EventEmitter } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ViewChildren, EventEmitter, ElementRef } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
@@ -31,10 +31,35 @@ export class FileExplorerComponent implements AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   // @ViewChild('refresh') btn: MatButton;
+  @ViewChild('upfile') _upfile: ElementRef;
+  @ViewChild('upfold') _upfold: ElementRef;
+  get UpFile()
+  {
+    return  (this._upfile.nativeElement as HTMLInputElement);
+  }
+  get UpFold()
+  {
+    return (this._upfold.nativeElement as HTMLInputElement);
+  }
   constructor(private http: HttpClient) {
     this.initPathStack();
   }
-
+  uploadfile() {
+    this.UpFile.click()
+  }
+  uploadfold() {
+    this.UpFold.click()
+  }
+  onGetUploadFile(event)
+  {
+    console.log('upload file', this.UpFile.files);
+    this.UpFile.value = ""
+  }
+  onGetUploadFold()
+  {
+    console.log(`upload fold`, this.UpFold.files);
+    this.UpFold.value = ""
+  }
   ngAfterViewInit() {
     this.refresh = new RefreshTable();
     this.getfileList = new GetFileList(this.http);

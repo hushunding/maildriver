@@ -3,53 +3,35 @@ import { FormControl } from '@angular/forms';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { SignupUserComponent } from '../signup-user/signup-user.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AccountServerService } from './account-server.service';
 
 @Component({
   selector: 'app-login-wind',
   templateUrl: './login-wind.component.html',
   styleUrls: ['./login-wind.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  providers: [AccountServerService]
 })
 
 export class LoginWindComponent implements OnInit {
   hide = true;
   account = { username: "", password: "" };
   expand = false
-  userList = new Array<{ username: string; password: string }>();
-  userset = new Map<string, string>();
 
-  adduser(username: string, password: string) {
-    if (username === "" || password === "") {
-      this.snackBar.open('用户名密码不能为空',"",{ duration: 2000})
-    }
-    else if (this.userset.has(username)) {
-      this.snackBar.open('用户名已存在',"",{ duration: 2000})
-    } else {
-      this.userset.set(username, password);
-      this.userList.push({ username, password });
-      localStorage.setItem('userList', JSON.stringify(this.userList));
-    }
+  get userList() {
+    return this.accoutSvr.userList;
   }
-  constructor(public dialog: MatDialog, public snackBar: MatSnackBar,private route: ActivatedRoute,
-    private router: Router) {
-    let locuserstorage = localStorage.getItem('userList')
-    if (locuserstorage) {
-      this.userList = JSON.parse(locuserstorage);
-      this.userList.map(user => this.userset.set(user.username, user.password));
-    }
-    else {
-      localStorage.setItem('userList', JSON.stringify([]));
-    }
-    let lastuserIndexstr = localStorage.getItem('lastuser')
-    if (lastuserIndexstr) {
-      this.account = JSON.parse(lastuserIndexstr);
-    }
+
+  constructor(public dialog: MatDialog, public snackBar: MatSnackBar, private route: ActivatedRoute,
+    private router: Router, private accoutSvr: AccountServerService) {
+    this.account = accoutSvr.LastUser;
+
   }
 
   ngOnInit() {
   }
   signup() {
-    this.adduser(this.account.username, this.account.password)
+    this.accoutSvr.adduser(this.account);
     // return
     // let dialogRef = this.dialog.open(SignupUserComponent, {
     //   width: '250px',
@@ -64,14 +46,8 @@ export class LoginWindComponent implements OnInit {
     // });
   }
   signin() {
-    if (!this.userset.has(this.account.username)) {
-      this.snackBar.open('用户名不存在',"",{ duration: 2000})
-    }
-    else if (!(this.userset.get(this.account.username) === this.account.password)) {
-      this.snackBar.open('密码错误',"",{ duration: 2000})
-    }
-    else {
-      localStorage.setItem('lastuser', JSON.stringify({ username: this.account.username, password: "" }));
+    if (this.accoutSvr.checkuser(this.account)) {
+      this.accoutSvr.LastUser = this.account;
       this.router.navigate(['main', this.account.username])
     }
   }

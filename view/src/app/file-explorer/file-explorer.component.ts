@@ -44,18 +44,13 @@ export class FileExplorerComponent implements AfterViewInit {
   constructor(private http: HttpClient) {
     this.initPathStack();
   }
-  uploadfile() {
-    this.UpFile.click()
-  }
-  uploadfold() {
-    this.UpFold.click()
-  }
+
   onGetUploadFile(event)
   {
     console.log('upload file', this.UpFile.files);
     this.UpFile.value = ""
   }
-  onGetUploadFold()
+  onGetUploadFold(event)
   {
     console.log(`upload fold`, this.UpFold.files);
     this.UpFold.value = ""

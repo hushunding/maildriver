@@ -3,8 +3,8 @@
   <input  #upfile type="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" multiple (change)="onGetUploadFile($event)">
   <input  #upfold type="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" multiple webkitDirectory (change)="onGetUploadFold($event)">
   <mat-menu #menu="matMenu">
-    <button mat-menu-item (click) = "uploadfile()">上传文件</button>
-    <button mat-menu-item (click) = "uploadfold()">上传文件夹</button>
+    <button mat-menu-item (click) = "upfile.click()">上传文件</button>
+    <button mat-menu-item (click) = "upfold.click()">上传文件夹</button>
   </mat-menu>
   <button mat-button [disabled]="!selection.hasValue()"><mat-icon>file_download</mat-icon>下载</button>
   <button mat-button [disabled]="!selection.hasValue()"><mat-icon>delete</mat-icon>删除</button>
@@ -23,7 +23,7 @@
   </mat-chip-list>
 </mat-toolbar>
 <mat-table #table [dataSource]="dataSource" matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
-  <!-- Checkbox Column -->
+  
   <ng-container matColumnDef="select">
     <mat-header-cell *matHeaderCellDef>
       <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">

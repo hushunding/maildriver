@@ -1,17 +1,16 @@
 
-import * as electron from "electron";
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from "electron";
 import * as url from "url";
 import * as path from "path";
 
 // Module to control application life.
-const app = electron.app;
 app.commandLine.appendSwitch('--enable-npapi');
 // Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: electron.BrowserWindow;
+let mainWindow: BrowserWindow;
+
 
 function createWindow() {
     // Create the browser window.
@@ -27,7 +26,8 @@ function createWindow() {
         }));
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
+    //mainWindow.setAutoHideMenuBar(true)
 
     // Emitted when the window is closed.
     mainWindow.on('closed', () => {
@@ -62,3 +62,54 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+const template :MenuItemConstructorOptions = [
+    {
+      label: '文件',
+      submenu: [
+        {role: 'undo'},
+        {role: 'redo'},
+        {type: 'separator'},
+        {role: 'cut'},
+        {role: 'copy'},
+        {role: 'paste'},
+        {role: 'pasteandmatchstyle'},
+        {role: 'delete'},
+        {role: 'selectall'}
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        {role: 'reload'},
+        {role: 'forcereload'},
+        {role: 'toggledevtools'},
+        {type: 'separator'},
+        {role: 'resetzoom'},
+        {role: 'zoomin'},
+        {role: 'zoomout'},
+        {type: 'separator'},
+        {role: 'togglefullscreen'}
+      ]
+    },
+    {
+      role: 'window',
+      submenu: [
+        {role: 'minimize'},
+        {role: 'close'}
+      ]
+    },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click () { require('electron').shell.openExternal('https://electron.atom.io') }
+        }
+      ]
+    }
+  ]
+  
+  
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)

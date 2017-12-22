@@ -9,10 +9,10 @@
             "request": "launch",
             "name": "Electron Main",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "program": "${workspaceRoot}/dist/app/main.js",
+            "program": "${workspaceRoot}/../dist/svr/main.js",
             //"protocol": "legacy",
             "outFiles": [
-                "${workspaceRoot}/dist/app/**/*.js"
+                "${workspaceRoot}/../dist/svr/**/*.js"
             ]
         },
         {
@@ -37,7 +37,7 @@
             "name": "Launch Node",
             "program": "${file}",
             "outFiles": [
-                "${workspaceRoot}/dist/app/**/*.js"
+                "${workspaceRoot}/../dist/svr/**/*.js"
             ]
         }
     ]

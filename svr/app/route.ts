@@ -1,11 +1,9 @@
-import { ICmdSvr } from "./cmdsrv/Idefine";
-import { Account } from "./account";
+import { ICmdChn } from "./cmdsrv/ICmdChn";
 
-export function setup(cmdsrv: ICmdSvr) {
+
+export function setup(cmdchn: ICmdChn) {
     //
     const cacheRoot = '.caches'
-    let account = new Account(cacheRoot);
-    cmdsrv.on('account', (cmd, res) => {
-        account[cmd.action](cmd)
-    })
+    cmdchn.on('accountTest', IMAPCheck)
 }
+

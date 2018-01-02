@@ -3,19 +3,22 @@ export interface IQueryCmd {
     sort: string; order: string;
     isForce: boolean;
 }
-export interface IAccountCmd {
-    action: 'verify' | 'add' | 'modify' | 'del'
-    username: string;
+export interface IMailAccountCmd {
+    user: string;
     password: string;
+    host:string;
+    port?:number;
+    tls?:boolean;
 }
 
-export interface ICmdSvr extends ICmdSend {
-    on(event: 'fileList', listener: (cmd: IQueryCmd, res: ICmdSend) => void): this;
-    on(event: 'account', listener: (cmd: IAccountCmd, res: ICmdSend) => void): this;
+export interface ICmdChn {
+    on(event: 'fileList', listener: (cmd: IQueryCmd, res: ICmdResp) => void): this;
+    on(event: 'accountTest', listener: (cmd: IMailAccountCmd, res: ICmdResp) => void): this;
+    send(cmd: string, arg: any): void;
     start(): void;
 }
-export interface ICmdSend {
-    send(cmd: string, arg: any): void;
+export interface ICmdResp {
+    send(arg: ICmdReslut): void;
 }
 
 export interface ICmdReslut {

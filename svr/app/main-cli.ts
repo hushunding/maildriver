@@ -1,7 +1,8 @@
-import { HttpCmdSvr } from "./cmdsrv/httpCmdSvr";
+import { HttpCmdChn } from "./cmdsrv/httpCmdChn";
+import  {setup } from "./route"
 
 // 命令行入口，需要启动浏览器
 
-const cmdsrv = new HttpCmdSvr();
-setup(cmdsrv).start();
+const cmdchn = new HttpCmdChn();
+setup(cmdchn)
 

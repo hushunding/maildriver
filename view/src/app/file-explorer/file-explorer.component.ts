@@ -8,7 +8,7 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/switchMap';
-import { SaveNode, SaveNodeApi } from '../fsDesc/fsSaveNode';
+import { SaveNode, SaveNodeApi } from '../../share/fsSaveNode';
 import { MatSort, SortDirection, MatButton, MatTableDataSource } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
 
@@ -114,10 +114,11 @@ export class FileExplorerComponent implements AfterViewInit {
     }
   }
 
-  CellClick(node: SaveNode) {
+  CellClick($event:MouseEvent, node: SaveNode) {
     this.myViewStack.push(node);
     this.selection.clear();
-    this.selection.toggle(node._nodeIndex);
+    $event.stopPropagation();
+    //this.selection.toggle(node._nodeIndex);
 
     console.log(node);
   }
@@ -137,7 +138,7 @@ export class FileExplorerComponent implements AfterViewInit {
 }
 class RefreshTable {
   pathIndex = -1;
-  refreshData: EventEmitter<{ isForce: boolean }> = new EventEmitter();
+  refreshData: EventEmitter<{ isForce: boolean }> = new EventEmitter(true);
 }
 
 export class GetFileList {

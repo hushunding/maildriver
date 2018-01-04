@@ -2,3 +2,11 @@
 {
     width: 250px
 }
+.loginmark
+{
+    font-size: 80%
+}
+.testbutton
+{
+    transform:scaleX(0.5)
+}

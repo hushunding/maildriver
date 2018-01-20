@@ -8,6 +8,14 @@ type cbReslut = Error | null;
 
 
 export class ImapNetDriver extends EventEmitter implements INetDiver {
+    connect(): void {
+        this.imap.connect();
+    }
+    disconnect()
+    {
+        this.imap.end()
+    }
+    retry: number;
     uploadJFile(jfile: string): INDupload {
         throw new Error("Method not implemented.");
     }
@@ -17,14 +25,15 @@ export class ImapNetDriver extends EventEmitter implements INetDiver {
     private imap: Imap;
     constructor(private config: Imap.Config) {
         super();
+        this.retry = 0;
         this.imap = new Imap(config);
-        this.imap.connect();
         this.imap.once('error', (err: cbReslut) => {
             this.emit('error', err);
         });
 
         this.imap.once('end', () => {
             console.log('Connection ended');
+            this.emit('end')
         });
         this.imap.once('ready', () => {
             this.checkAndformat(null);

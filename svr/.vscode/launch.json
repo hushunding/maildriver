@@ -4,15 +4,16 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
         {
             "type": "node",
             "request": "launch",
             "name": "Electron Main",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "program": "${workspaceRoot}/../dist/svr/main.js",
+            "program": "${workspaceRoot}/dist/main.js",
             //"protocol": "legacy",
             "outFiles": [
-                "${workspaceRoot}/../dist/svr/**/*.js"
+                "${workspaceRoot}/dist/**/*.js"
             ]
         },
         {
@@ -37,7 +38,16 @@
             "name": "Launch Node",
             "program": "${file}",
             "outFiles": [
-                "${workspaceRoot}/../dist/svr/**/*.js"
+                "${workspaceRoot}/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "cmd",
+            "program": "${workspaceRoot}/dist/main-cli.js",
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*.js"
             ]
         }
     ]

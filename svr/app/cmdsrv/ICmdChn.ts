@@ -9,11 +9,13 @@ export interface IMailAccountCmd {
     host:string;
     port?:number;
     tls?:boolean;
+    xoauth?: string;
 }
 
 export interface ICmdChn {
     on(event: 'fileList', listener: (cmd: IQueryCmd, res: ICmdResp) => void): this;
     on(event: 'accountTest', listener: (cmd: IMailAccountCmd, res: ICmdResp) => void): this;
+    on(event: 'LogandInit', listener: (cmd: IMailAccountCmd, res: ICmdResp) => void): this;
     send(cmd: string, arg: any): void;
     start(): void;
 }

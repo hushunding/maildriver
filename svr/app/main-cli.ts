@@ -5,4 +5,5 @@ import  {setup } from "./route"
 
 const cmdchn = new HttpCmdChn();
 setup(cmdchn)
+cmdchn.start();
 

@@ -1,8 +1,9 @@
-import { ICmdReslut, IMailAccountCmd, ICmdResp } from "./cmdsrv/ICmdChn";
+import { ICmdReslut, IMailAccountCmd, ICmdResp } from "../cmdsrv/ICmdChn";
 import * as IMAP from 'imap';
 
 export function IMAPCheck(mailAccount: IMailAccountCmd, resp: ICmdResp) {
     var imap = new IMAP(mailAccount);
+
     imap.once('ready', () => {
         imap.openBox('INBOX', true, (error, mailbox) => {
             if (error) {
@@ -19,7 +20,14 @@ export function IMAPCheck(mailAccount: IMailAccountCmd, resp: ICmdResp) {
             }
         });
     })
-    imap.connect()
+    imap.on('error', (err: Error) => {
+        resp.send({
+            res: 'failed',
+            code: err.message
+        })
+    })
+    imap.connect();
+
 }
 
 if (require.main == module) {

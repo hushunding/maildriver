@@ -1,7 +1,7 @@
 
 import { ImapNetDriver } from "./imapDirver";
-import * as MailComposer from "./maillib/mail-composer";
-import * as MimeNode from "./maillib/mime-node";
+import * as MailComposer from "../maillib/mail-composer";
+import * as MimeNode from "../maillib/mime-node";
 import * as fs from 'fs';
 let message = {
     // Comma separated lsit of recipients 收件人用逗号间隔

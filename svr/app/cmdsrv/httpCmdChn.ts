@@ -8,7 +8,8 @@ export class HttpCmdResp implements ICmdResp {
 
     }
     send(arg: any): void {
-        this.res.write({ cmd: 'resp', arg });
+        this.res.write(JSON.stringify({ cmd: 'resp', arg }));
+        this.res.end();
     }
 
 }
@@ -16,7 +17,7 @@ export class HttpCmdChn extends EventEmitter implements ICmdChn {
     private _cmdbuf: Array<{ cmd: string, arg: any }>;
     public send(cmd: string, arg: any): void {
         this._cmdbuf.push({ cmd, arg });
-        throw new Error("Method not implemented.");
+        //throw new Error("Method not implemented.");
     }
     public start(): void {
         this.server.listen(10800);
@@ -27,7 +28,8 @@ export class HttpCmdChn extends EventEmitter implements ICmdChn {
         this._cmdbuf = [];
         this.server = http.createServer((req, res) => {
             let jsonData = "";
-            if (req.method !== 'POST' || req.url !== '/csapi') {
+
+            if (req.method !== 'POST' || (req.url !== '/csapi' && req.url !== '/hb')) {
                 res.end('HTTP/1.1 400 Bad Request\r\n\r\n');
             }
             req.on('data', (chunk) => {
@@ -36,8 +38,9 @@ export class HttpCmdChn extends EventEmitter implements ICmdChn {
             req.on('end', () => {
                 const reqObj = JSON.parse(jsonData);
                 if (reqObj.cmd === 'hb') {
-                    res.write(this._cmdbuf);
-                    this._cmdbuf = [];
+                    res.write(JSON.stringify(this._cmdbuf));
+                    this._cmdbuf = [{cmd:'idle', arg:''}];
+                    res.end();
                 } else {
                     this.emit(reqObj.cmd, reqObj.arg, new HttpCmdResp(res));
                 }

@@ -8,9 +8,15 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/filter'
 import { SaveNode, SaveNodeApi } from '../../share/fsSaveNode';
 import { MatSort, SortDirection, MatButton, MatTableDataSource } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AccountServerService } from '../login-wind/account-server.service';
+import { CmdChnService } from '../cm-chn/cmd-chn.service';
+import { ActivationEnd } from '@angular/router/src/events';
+import { IMailAccountCmd, ICmdReslut } from '../../share/ICmdChn';
 
 @Component({
   selector: 'app-file-explorer',
@@ -18,6 +24,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./file-explorer.component.css']
 })
 export class FileExplorerComponent implements AfterViewInit {
+  account: IMailAccountCmd;
+
   isRateLimitReached: boolean;
   isLoadingResults: boolean;
   resultsLength = 0;
@@ -33,25 +41,30 @@ export class FileExplorerComponent implements AfterViewInit {
   // @ViewChild('refresh') btn: MatButton;
   @ViewChild('upfile') _upfile: ElementRef;
   @ViewChild('upfold') _upfold: ElementRef;
-  get UpFile()
-  {
-    return  (this._upfile.nativeElement as HTMLInputElement);
+  get UpFile() {
+    return (this._upfile.nativeElement as HTMLInputElement);
   }
-  get UpFold()
-  {
+  get UpFold() {
     return (this._upfold.nativeElement as HTMLInputElement);
   }
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private route: ActivatedRoute,
+    private router: Router, private accoutSvr: AccountServerService, private cmdChn: CmdChnService) {
+    this.router.events.filter(event => event instanceof ActivationEnd)
+      .subscribe(event => this.loginAndInit())
     this.initPathStack();
   }
+  loginAndInit(): any {
+    this.route.params.subscribe(params => { this.account = this.accoutSvr.findFullUser(params.username) })
+    this.cmdChn.send<ICmdReslut>('LogandInit', this.account)
+      .subscribe(reslut => null);
+    throw new Error("Method not implemented.");
+  }
 
-  onGetUploadFile(event)
-  {
+  onGetUploadFile(event) {
     console.log('upload file', this.UpFile.files);
     this.UpFile.value = ""
   }
-  onGetUploadFold(event)
-  {
+  onGetUploadFold(event) {
     console.log(`upload fold`, this.UpFold.files);
     this.UpFold.value = ""
   }
@@ -114,7 +127,7 @@ export class FileExplorerComponent implements AfterViewInit {
     }
   }
 
-  CellClick($event:MouseEvent, node: SaveNode) {
+  CellClick($event: MouseEvent, node: SaveNode) {
     this.myViewStack.push(node);
     this.selection.clear();
     $event.stopPropagation();

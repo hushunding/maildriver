@@ -17,7 +17,9 @@ import {
   MatDialogModule,
   MatStepperModule,
   MatSnackBarModule,
-  MatMenuModule
+  MatMenuModule,
+  MatExpansionModule,
+  MatSlideToggleModule
 } from '@angular/material';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -30,6 +32,7 @@ import { MainWindComponent } from './main-wind/main-wind.component';
 import { LoginWindComponent } from './login-wind/login-wind.component';
 import { SignupUserComponent } from './signup-user/signup-user.component';
 import { FormsModule } from '@angular/forms';
+import { CmdChnService } from './cm-chn/cmd-chn.service';
 
 @NgModule({
   declarations: [
@@ -64,9 +67,13 @@ import { FormsModule } from '@angular/forms';
     MatDialogModule,
     MatStepperModule,
     MatSnackBarModule,
-    MatMenuModule
+    MatMenuModule,
+    MatExpansionModule,
+    MatSlideToggleModule
   ],
-  providers: [],
+  providers: [
+    CmdChnService
+  ],
   entryComponents: [
     SignupUserComponent
   ],

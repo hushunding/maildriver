@@ -5,8 +5,8 @@ import { LoginWindComponent } from './login-wind/login-wind.component';
 
 
 const routes: Routes = [
-    { path: '', redirectTo: '/login', pathMatch: 'full' },
-    { path: 'login', component: LoginWindComponent },
+    { path: '', redirectTo: '/login/true', pathMatch: 'full' },
+    { path: 'login/:canAutoLogin', component: LoginWindComponent, data :{canAutoLogin: true} },
     { path: 'main/:username', component: MainWindComponent, data: {username: '匿名'} }
 ];
 

@@ -1,0 +1,14 @@
+{
+
+"/csapi":{
+
+  "target":"http://hsd-srv:10800"
+
+},
+"/hb":{
+
+"target":"http://hsd-srv:10800"
+
+}
+
+}

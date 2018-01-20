@@ -2,20 +2,20 @@
   <mat-card-header>
     <mat-card-title>
       <h1>
-        <mat-icon>mail</mat-icon> 登录邮盘</h1>
+        <mat-icon>mail</mat-icon><span *ngIf="isLoginWindow">登录邮盘</span> <span *ngIf="!isLoginWindow">邮盘信息</span></h1>
     </mat-card-title>
   </mat-card-header>
 
-  <mat-form-field>
+  <mat-form-field hintLabel={{userhint}}>
     <mat-icon matPrefix>account_box</mat-icon>
-    <input matInput placeholder="用户名" [matAutocomplete]="auto"  [(ngModel)]="account.username" required>
-    <mat-autocomplete #auto="matAutocomplete">
+    <input matInput placeholder="邮箱用户名" [matAutocomplete]="auto" [(ngModel)]="account.user" required type="email" [readonly]="!isLoginWindow">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="accountSelect($event)">
       <mat-option>输入新用户名</mat-option>
-      <mat-option *ngFor="let item of userList" [value]="item.username">
-        {{ item.username }}
+      <mat-option *ngFor="let item of userList" [value]="item.user">
+        {{ item.user }}
       </mat-option>
     </mat-autocomplete>
-    <mat-icon matSuffix (click)="account.username = ''">clear</mat-icon>
+    <mat-icon *ngIf="isLoginWindow" matSuffix (click)="ClearAccount()">clear</mat-icon>
   </mat-form-field>
   <mat-form-field>
     <input matInput placeholder="请输入密码" [type]="hide ? 'password' : 'text'" [(ngModel)]="account.password" required>
@@ -23,7 +23,24 @@
     <mat-icon matPrefix>lock</mat-icon>
   </mat-form-field>
 
+  <mat-slide-toggle (change)="showDetail= !showDetail; showDetialHiht = showDetail? '隐藏IMAP服务信息':'显示IMAP服务信息'">{{showDetialHiht}}</mat-slide-toggle>
+  <mat-form-field *ngIf="showDetail">
+    <input matInput placeholder="IMAP服务器地址" [(ngModel)]="account.host" type="url" hi>
+    <button class=testbutton matSuffix *ngIf="showDetail" mat-raised-button (click)="CheckAccount()">测试</button>
+    <mat-hint align="start">{{CheckAccountReslut}} </mat-hint>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="showDetail" width="20px">
+    <input matInput placeholder="端口号" [(ngModel)]="account.port" type="number">
+    <mat-checkbox matSuffix [(ngModel)]="account.tls">TLS</mat-checkbox>
+  </mat-form-field>
+  
+  <div *ngIf="isLoginWindow">
+    <mat-checkbox class=loginmark [(ngModel)]="AutoLogin" (change)="Recodepassword = AutoLogin? true: Recodepassword">自动登录</mat-checkbox>
+    <mat-checkbox class=loginmark [(ngModel)]="Recodepassword">记住密码</mat-checkbox>
+  </div>
   <mat-card-actions>
-    <button mat-button (click)="signin()">登录</button> or <button mat-button (click)="signup()" >注册</button>
+    <button *ngIf="isLoginWindow" mat-button (click)="signin()">登录</button> 
+    <button *ngIf="!isLoginWindow" mat-button (click)="signout()">注销</button> or <button mat-button (click)="signup()">保存</button>
   </mat-card-actions>
 </mat-card>

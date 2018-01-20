@@ -37,7 +37,7 @@
 
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header> 文件名 </mat-header-cell>
-    <mat-cell *matCellDef="let row"> <button  (click)="CellClick(row)">{{row._name}} </button> </mat-cell>
+    <mat-cell *matCellDef="let row"> <span mat-button (click)="CellClick($event,row)" style='cursor:pointer'><u>{{row._name}}</u></span> </mat-cell>
   </ng-container>
   <ng-container matColumnDef="fileSize">
     <mat-header-cell *matHeaderCellDef mat-sort-header> 大小 </mat-header-cell>
@@ -46,4 +46,7 @@
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" [class.example-selected-row]="selection.isSelected(row._nodeIndex)" (click)="selection.toggle(row._nodeIndex)"></mat-row>
 </mat-table>
+<mat-toolbar>
+
+</mat-toolbar>
 <!--  (click)="CellClick(row)"-->
